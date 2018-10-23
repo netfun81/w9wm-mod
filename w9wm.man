@@ -1,0 +1,167 @@
+.if t .ds 85 8\(12
+.if n .ds 85 8-1/2
+.TH w9wm 1x
+.SH NAME
+w9wm \- \*(85-like Window Manager for X
+.SH SYNOPSIS
+.B w9wm
+[
+.B \-grey
+] [
+.B \-version
+] [
+.B \-font
+.I fname
+] [
+.B \-nokeys
+] [
+.B \-nostalgia
+] [
+.B \-debug
+] [
+.B \-pass
+] [
+.B \-term
+.I termprog
+] [
+.B \-virtuals
+.I n
+] [
+.B exit | restart
+]
+.SH DESCRIPTION
+.I w9wm
+is a window manager for X which attempts to emulate the window management
+policies of Plan 9's 
+.I \*(85
+window manager but adds some candy stuff like virtual screens and
+keyboard shortcuts.
+.PP
+The
+.B \-grey
+option makes the background light grey, as does \*(85.
+Use this option for maximum authenticity.
+.B \-font
+.I fname
+sets the font in
+.IR w9wm 's
+menu to
+.IR fname ,
+overriding the default.
+.B \-nokeys
+option inhibits keyboard shortcups (Ctrl+Tab and Shift+Ctrl+Tab)
+.B \-nostalgia
+applies some useless modifications to w9wm look & feel (windows border
+and cursor appearance)
+.B \-debug
+triggers debug mode
+.B \-pass
+uses click-to-focus-passes-through-click, which means that clicking on
+a nonactive window with whatever mouse button activates it and follows
+click to this window
+.B \-term
+.I termprog
+specifies an alternative program to run when the
+.I New
+menu item is selected.
+.B \-virtuals
+.I n
+set the number of virtual screens used
+.B \-version
+prints the current version on standard error, then exits.
+.PP
+To make 
+.I w9wm
+exit, you have to run
+.B "w9wm exit"
+on the command line.  There is no ``exit'' menu item.
+.PP
+.I w9wm
+is click-to-type: it has a notion of the current window,
+which is usually on top, and always has its border darkened.
+Characters typed at the keyboard go to the current window,
+and mouse clicks outside the current window are swallowed up
+by
+.IR w9wm .
+To make another window the current one, click on it with button 1 or
+type Ctrl+Tab (this shortcut is not ``stable'', which means that I
+could change it in case it would eventually be annoying).  Unlike
+other X window managers, w9wm implements `mouse focus': mouse events
+are sent only to the current window.
+.PP
+A menu of window operations is available by pressing button 3
+outside the current window.
+The first of these,
+.IR New ,
+attempts to spawn a
+.I 9term
+process (or
+.I xterm
+if
+.I 9term
+is not available).
+The new
+.I 9term
+will request that its outline be swept using button 3
+of the mouse, by changing the cursor.
+.RI ( xterm
+defaults to a fixed size, and thus wants to be dragged; pressing
+button 3 places it.)
+.PP
+The next four menu items are
+.IR Reshape ,
+.IR Move ,
+.IR Delete ,
+and
+.IR Hide .
+All of the operations change the cursor into a target, prompting the user
+to click button 3 on one of the windows to select it for the operation.
+At this stage, clicking button 1 or 2 will abort the operation.
+Otherwise, if the operation was
+.IR Resize ,
+the user is prompted to sweep out the new outline with button 3.
+If it was
+.IR Move ,
+the user should keep the button held down after the initial click that selected
+the window, and drag the window to the right place before releasing.
+In either case, button 1 or 2 will abort the operation.
+.PP
+If the
+.I Delete
+operation is selected, the window will be deleted when the button is released.
+This typically kills the client that owns the window.
+The
+.I Hide
+operation just makes the window invisible.  While hidden, the window's
+name appears on the bottom of the button 3 menu.  Selecting that item
+brings the window back (unhides it).
+This operation replaces the iconification feature provided by other
+window managers.
+.PP
+A menu is provided to switch from a virtual screen to another.  This popup is triggered by using the button 2, which displays a menu looking like the previous one but with four entries, 
+.IR One ,
+.IR Two ,
+.IR Three ,
+and
+.IR Four .
+Selecting one of these entries will switch to another virtual screen.
+.PP
+There is also a menu to run programs using button 1.  Hold both
+"shift" and "left ctrl" keys and press button 1.  w9wm will then
+display a menu that allows you to exec programs specified in the 
+.I $HOME/.w9wmrc
+file.  Put each command in one line.  w9wm does not yet support args
+for these commands, write a one-line shell script if you need this.q
+.SH BUGS AND LIMITATIONS
+Is not completely compatible with \*(85.
+.PP
+There is a currently a compiled-in limit of 32 hidden windows.
+.PP
+Also, you cannot put more than 32 commands in your
+.IR .w9wmrc 
+file
+.SH "SEE ALSO"
+.IR 9term (1),
+.IR 9wm (1),
+.IR 9menu (1),
+.IR xterm (1).

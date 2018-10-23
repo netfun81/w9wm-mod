@@ -1,0 +1,8 @@
+       INCLUDES = -I$(TOP)
+        DEPLIBS = $(DEPXLIB)
+LOCAL_LIBRARIES = $(XLIB)
+        DEFINES = -DSHAPE #-DDEBUG -DDEBUG_EV
+           SRCS = 9wm.c manage.c menu.c client.c grab.c cursor.c error.c
+           OBJS = 9wm.o manage.o menu.o client.o grab.o cursor.o error.o
+
+ComplexProgramTarget(w9wm)

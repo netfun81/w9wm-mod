@@ -1,0 +1,157 @@
+			  w9wm Version 0.4.0
+		 Copyright 2000-2001 Benjamin Drieu.
+
+		     with large portions of code
+		     Copyright 1994 David Hogan.
+
+What is w9wm ?
+==============
+
+w9wm is a quick & dirty hack based on 9wm, the wonderful "template"
+window manager made by David Hogan.
+
+9wm is really nice for all day use (I mean, a large Emacs window
+covering the whole screen and a terminal to use Lynx and browse the
+web ;-)) provided that you do not have a large number of windows on
+your screen.  But in some occasions it is not the case (ie. you have
+to telnet to 4-5 remote machines), which is painful with 9wm.
+
+This need for virtual screens motivated this about 50 lines hack.
+w9wm brings support for virtual screens (provided you use the second
+button, aka middle button to select one virtual screen) as well as for
+key bindings (to switch from one window to another).
+
+
+What is w9wm not?
+================
+
+A configurable kitchen sink.  If you want to modify virtual screens
+behavior or so, you have to write it.
+
+
+Where do I get it?
+==================
+
+It depends.  If you are lucky you might fetch it from
+http://inferno.cs.univ-paris8.fr/~drieu/w9wm/.  Otherwise, please drop
+a letter to bdrieu@april.org
+
+Some distributions might provide packages (there is a port for
+OpenBSD).
+
+
+Author
+======
+
+9wm was written by David Hogan (dhog@cs.su.oz.au), a postgraduate
+student at the Basser Department of Computer Science, University
+of Sydney (http://www.cs.su.oz.au/basser_home.html).
+
+w9wm was written by Benjamin Drieu (bdrieu@april.org) at University of
+Paris 8 (http://www.cs.univ-paris8.fr/).
+
+
+Licence
+=======
+
+w9wm is free software and uses the same licence than 9wm.  Look at the
+README.9wm file included in this distribution to read it.
+
+
+How do I compile/install it?
+============================
+
+Assuming your system is correctly configured, you should only need to
+run xmkmf to generate the Makefile, and then run make or make install.
+make install.man should copy the manpage (9wm.man) to the appropriate
+directory.
+
+If the make fails, complaining that the function _XShapeQueryExtension
+does not exist, try removing the "-DSHAPE" from the Imakefile, and
+run xmkmf and make again.
+
+If you don't have imake, or it is misconfigured, or you would prefer
+not to use it, try copying the file "Makefile.no-imake" to "Makefile",
+then edit the definitions in this Makefile to suit your system.  This
+may require defining suitable compilation flags for your system
+(normally imake does this for you).  For instance, on AIX you must
+include "-DBSD_INCLUDES" in CFLAGS.
+
+
+How do I use it?
+================
+
+See the manual page for details.  You should probably read the
+man page for 9term as well.
+
+
+What if I find a bug?
+=====================
+
+If you find a bug on virtual screens, please email a bug report to
+bdrieu@april.org.  If this is not related to virtual screens, please
+mail bug reports to 9wm-bugs@plan9.cs.su.oz.au, so that they can
+incorporate fixes into the next release.  If you can tell them how to
+fix it, all the better.
+
+
+Known Problems/Bugs
+===================
+
+9wm tries hard to emulate 8-1/2, but isn't 100% compatible.  If
+you are an experienced 8-1/2 user, please be patient with it.
+
+Multi-screen displays (aka "Zaphod Mode") are not supported.  Fixing
+this requires major changes to the source, so don't expect to see
+this fixed for some time.
+
+One intentional difference between 9wm and 8-1/2 is in the behaviour
+of the menu when the last hidden item is unhidden.  Under 8-1/2, when
+the menu is next used, it pops up with "New" selected.  Under 9wm,
+the (new) last menu item will be selected.  This is a feature.  It
+may be confusing if you frequently switch between 9wm and 8-1/2.
+If you don't like this feature, email me for the one line fix.
+
+There have been some problems encountered when resizing 9term on
+some platforms.  This turns out to be a problem in 9term (actually
+in libXg, to be precise).  Newer versions of 9term should be
+immune to this, see matty@cs.su.oz.au if your 9term needs fixing.
+
+Some client programs do weird things.  One of these is Frame Maker.
+It appears that if it has a modal dialog on the screen, then if any
+of its windows are current, all keypresses are redirected to the
+modal dialog.  This is not 9wm's fault -- Frame Maker is doing this.
+
+
+See Also
+========
+
+ftp://ftp.cs.su.oz.au/matty/unicode/
+    for source to 9term (get README first)
+
+ftp://research.att.com/dist/sam/
+    for source && info on Rob Pike's editor "sam"
+
+ftp://rtfm.mit.edu/pub/usenet/comp.unix.shell/rc-FAQ
+    for information on a publically available implementation
+    of the Plan 9 shell "rc" for unix (or look in comp.unix.shell).
+
+ftp://viz.tamu.edu/pub/rc
+    for source to the abovementioned implementation of rc.
+
+ftp://research.att.com/dist/plan9doc/
+ftp://research.att.com/dist/plan9man/
+    for information on Plan 9 (including the 8-1/2 manual entry)
+
+
+Acknowledgements
+================
+
+Thanks to David Hogan for the original 9wm.  Please look at the
+README.9wm file included in this distribution to read other
+acknowledgements.
+
+Thanks to Erik Quanstrom for helping me discovering the wonderful
+Xnest and reporting a bug.  Thanks to Andrew S. Midthune for his
+click-to-focus-passes-through-click patch.  Thanks to Michael Dingler
+for bugs report.

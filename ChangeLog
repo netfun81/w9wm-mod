@@ -1,0 +1,51 @@
+2001-02-14  Benjamin Drieu  <benj@april.org>
+
+	* 9wm.c (main): changed KeyPress handling so that it now correctly
+	behaves with *Lock modifiers as well as it does not send Tab
+	anymore to clients
+
+2001-02-11  Benjamin Drieu  <drieu@bocal.cs.univ-paris8.fr>
+
+	* w9wm-0.4.0: version 0.4.0 released
+
+2001-02-10  Benjamin Drieu  <drieu@bocal.cs.univ-paris8.fr>
+
+	* menu.c (initb2menu): add the -virtual switch to control the
+	number of virtual screens (default, 4).
+
+	* 9wm.c (configurereq): fixed the motif dialogs bug that was
+	causing parents not to resize properly
+	
+Mon Jan 22 02:30:57 2001  Benjamin Drieu  <bdrieu@april.org>
+
+	* w9wm-0.3.2: version 0.3.2 (unreleased for the moment)
+
+	* 9wm.c (main): fix the ``crash if no window selected while
+	cycling'' bug
+	(activateprevious,activatenext): fix cycling problems when there
+	are windows in several virtual screens
+
+Sun Jan  7 17:33:43 2001  Benjamin Drieu  <drieu@bocal.cs.univ-paris8.fr>
+
+	* w9wm-0.3.1: version 0.3.1 (unreleased)
+
+Mon Jan  1 20:10:13 2001  Benjamin Drieu  <drieu@bocal.cs.univ-paris8.fr>
+
+	* 9wm.c (main): add -nokeys option to inhibit keyboard shortcuts
+	(usage): update available options
+
+	* client.c (setactive): add -nokeys option to inhibit keyboard
+	shortcuts
+	
+	* w9wm.1: update man page
+
+Sat Dec 23 19:31:00 2000  Benjamin Drieu  <bdrieu@april.org>
+
+	* menu.c (button): add support for click-passes-through-focus,
+	thanks to Andy Midthune
+
+	* grab.c (draw_text,menuhit): add this function for Xnest
+	compatibility, thanks to Eric Quanstrom
+
+	* 9wm.c (main): add support for the "-pass" option
+
