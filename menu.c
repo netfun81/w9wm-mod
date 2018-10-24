@@ -93,8 +93,7 @@ XButtonEvent *e;
 	    if (click_passes)
 	      XAllowEvents (dpy, ReplayPointer, curtime);
         }
-	else if ((e->state&(ShiftMask|ControlMask))==(ShiftMask|ControlMask)
-		 && progsnames[0] != NULL)
+	else if (progsnames[0] != NULL)
 	  {
 	    int n;
 	    if ((n = menuhit(e, &progs)) != -1)
