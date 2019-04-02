@@ -129,11 +129,11 @@ XButtonEvent *e;
 	    XAllowEvents (dpy, ReplayPointer, curtime);
         }
      else {
-		 if ((e->state&(Mod4Mask))==(Mod4Mask))
+        if ((e->state&(Mod4Mask))==(Mod4Mask))
             button2(e);
 	     else
             button3(e);
-		}
+        }
         break;
     }
 }
