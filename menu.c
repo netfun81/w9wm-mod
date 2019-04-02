@@ -128,10 +128,12 @@ XButtonEvent *e;
             active(c);
 	    XAllowEvents (dpy, ReplayPointer, curtime);
         }
-        if ((e->state&(Mod4Mask))==(Mod4Mask))
-			button2(e);
-	else
+     else {
+		 if ((e->state&(Mod4Mask))==(Mod4Mask))
+            button2(e);
+	     else
             button3(e);
+		}
         break;
     }
 }
