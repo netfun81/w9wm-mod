@@ -93,7 +93,8 @@ XButtonEvent *e;
 	    if (click_passes)
 	      XAllowEvents (dpy, ReplayPointer, curtime);
         }
-	else if (progsnames[0] != NULL)
+	    else if ((e->state&(Mod4Mask))==(Mod4Mask)
+		 && progsnames[0] != NULL)
 	  {
 	    int n;
 	    if ((n = menuhit(e, &progs)) != -1)
@@ -116,12 +117,8 @@ XButtonEvent *e;
             active(c);
 	    XAllowEvents (dpy, ReplayPointer, curtime);
         }
-	else {
-            if ((e->state&(ShiftMask|ControlMask))==(ShiftMask|ControlMask))
-                menuhit(e, &egg);
-	    else
-	        button2(e);
-	}
+	else 
+        spawn();
         return;
     default:
         return;
@@ -131,6 +128,8 @@ XButtonEvent *e;
             active(c);
 	    XAllowEvents (dpy, ReplayPointer, curtime);
         }
+        if ((e->state&(Mod4Mask))==(Mod4Mask))
+			button2(e);
 	else
             button3(e);
         break;
