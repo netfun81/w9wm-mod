@@ -288,7 +288,7 @@ char    *argv[];
 	  if (use_keys)
 	    {
 	      if (XLookupKeysym(&(ev.xkey),0) == XK_Tab && 
-		  (ev.xkey.state & ControlMask))
+		  (ev.xkey.state & Mod4Mask))
 		{
 		  if (ev.xkey.state & ShiftMask)
 		    activateprevious();
