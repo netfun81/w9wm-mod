@@ -1,8 +1,10 @@
-this is w9wm window manager version 0.4.2 with some custom mods:
+this is w9wm window manager version 0.4.2 with these changes:
 
-1. open new windows automatically, code borrowed from pcostantini.
-2. left click desktop for application menu, middle click for virtual desktops, no need to hold other keys.
-3. more changes as I add them.
+1. Open new windows automatically instead of just showing a cursor.
+2. Mod4 + Left mouse button click on desktop shows programs menu.
+3. Middle mouse button click on desktop without any key opens terminal.
+4. Mod4 + right mouse button click on desktop will show vdesk menu.
+5. Mod4 + Tab to switch between apps on same desk (mod4 + Shift + Tab for rev). 
 
 about w9wm:
 
