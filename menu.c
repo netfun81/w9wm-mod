@@ -86,15 +86,14 @@ XButtonEvent *e;
         XTranslateCoordinates(dpy, e->window, root, e->x, e->y,
                 &e->x, &e->y, &dw);
     switch (e->button) {
-    case Button1:
+    case Button2:
         if (c) {
             XMapRaised(dpy, c->parent);
             active(c);
 	    if (click_passes)
 	      XAllowEvents (dpy, ReplayPointer, curtime);
         }
-	    else if ((e->state&(Mod4Mask))==(Mod4Mask)
-		 && progsnames[0] != NULL)
+	    else if (progsnames[0] != NULL)
 	  {
 	    int n;
 	    if ((n = menuhit(e, &progs)) != -1)
@@ -111,14 +110,13 @@ XButtonEvent *e;
 	      }
 	  }
         return;
-    case Button2:
+    case Button1:
         if (c && click_passes) {
             XMapRaised(dpy, c->parent);
             active(c);
 	    XAllowEvents (dpy, ReplayPointer, curtime);
         }
-	else 
-        spawn();
+        else button2(e);
         return;
     default:
         return;
@@ -128,12 +126,7 @@ XButtonEvent *e;
             active(c);
 	    XAllowEvents (dpy, ReplayPointer, curtime);
         }
-     else {
-        if ((e->state&(Mod4Mask))==(Mod4Mask))
-            button2(e);
-	     else
-            button3(e);
-        }
+     else button3(e);
         break;
     }
 }

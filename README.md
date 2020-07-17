@@ -1,9 +1,9 @@
 this is w9wm window manager version 0.4.2 with these changes:
 
 1. Open new windows automatically instead of just showing a cursor.
-2. Mod4 + Left mouse button click on desktop shows programs menu.
-3. Middle mouse button click on desktop without any key opens terminal.
-4. Mod4 + right mouse button click on desktop will show vdesk menu.
+2. Left mouse button click on desktop shows virtual desktop menu.
+3. Middle mouse button click on desktop shows applications menu.
+4. Right mouse button click on desktop shows system menu.
 5. Mod4 + Tab to switch between apps on same desk (mod4 + Shift + Tab for rev). 
 
 about w9wm:
