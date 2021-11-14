@@ -37,12 +37,10 @@ char    *b2items[NUMVIRTUALS+1] =
   0,
 };
 
-
 Menu    b2menu =
 {
     b2items,
 };
-
 
 char    *b3items[B3FIXED+MAXHIDDEN+1] = 
 {
@@ -86,15 +84,26 @@ XButtonEvent *e;
         XTranslateCoordinates(dpy, e->window, root, e->x, e->y,
                 &e->x, &e->y, &dw);
     switch (e->button) {
-    case Button2:
+    case Button1:
         if (c) {
             XMapRaised(dpy, c->parent);
             active(c);
 	    if (click_passes)
 	      XAllowEvents (dpy, ReplayPointer, curtime);
         }
-	    else if (progsnames[0] != NULL)
-	  {
+	    else {
+        if ((e->state&(Mod4Mask))==(Mod4Mask))
+            button2(e);
+            }
+        return;
+    case Button2:
+        if (c && click_passes) {
+            XMapRaised(dpy, c->parent);
+            active(c);
+	    XAllowEvents (dpy, ReplayPointer, curtime);
+        }
+        else if (progsnames[0] != NULL)
+	    {
 	    int n;
 	    if ((n = menuhit(e, &progs)) != -1)
 	      {
@@ -103,20 +112,12 @@ XButtonEvent *e;
 		    close(ConnectionNumber(dpy));
 		    execlp(progsnames[n], progsnames[n], 0);
 		    exit(1);
-		  }
+		  } 
 		  exit(0);
-		}
+		  }
 		wait((int *) 0);
 	      }
-	  }
-        return;
-    case Button1:
-        if (c && click_passes) {
-            XMapRaised(dpy, c->parent);
-            active(c);
-	    XAllowEvents (dpy, ReplayPointer, curtime);
-        }
-        else button2(e);
+	      }
         return;
     default:
         return;
@@ -125,12 +126,12 @@ XButtonEvent *e;
             XMapRaised(dpy, c->parent);
             active(c);
 	    XAllowEvents (dpy, ReplayPointer, curtime);
-        }
-     else button3(e);
-        break;
+		}
+        else
+        button3(e);
+        return;
     }
 }
-
 
 void 
 button2(e)
@@ -187,9 +188,6 @@ XButtonEvent *e;
         cmapfocus(current);
 }
 
-
-
-
 void
 switch_to(n)
 int n;
@@ -201,7 +199,6 @@ int n;
   switch_to_c(n,clients);
   current = currents[virtual];
 }
-
 
 void
 switch_to_c(n,c)
@@ -240,8 +237,6 @@ Client * c;
 	}
     }
 }
-
-
 
 void
 spawn()
