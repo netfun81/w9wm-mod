@@ -7,24 +7,23 @@ this is w9wm window manager version 0.4.2 with these changes:
 5. Right click desktop for system menu.
 
 HOTKEYS:
-Alt+(1-9)
-  switches virtual desktops.
-Alt+Tab, (Alt+Shift+Tab)
-  switch applications on same desk.
-Alt+r
-  exec dmenu
-Alt+t
-  exec terminal
-Alt+m
-  move client
-Alt+n
-  make client a new size
-Alt+d
-  close current window
-Alt+shift+w
-  restart w9wm
-Alt+shift+q
-  quit w9wm
+Alt+(1-9) - switches virtual desktops
+
+Alt+Tab, (Alt+Shift+Tab) - switch applications on same desk
+
+Alt+r - exec dmenu
+
+Alt+t - exec terminal
+
+Alt+m - move client
+
+Alt+n - make client a new size
+
+Alt+d - close current window
+
+Alt+shift+w - restart w9wm
+
+Alt+shift+q - quit w9wm
 
 BUGS: (To be looked at in future)
 after starting w9wm alt keys arent working until selecting "New" from menu.
