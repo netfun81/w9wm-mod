@@ -1,6 +1,5 @@
-/* Copyright (c) 1994 David Hogan, 2000 Benjamin Drieu, see README for licence details */
 #include <stdio.h>
-#include <unistd.h>
+#include <stdlib.h>
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/wait.h>
@@ -14,36 +13,36 @@ Client  *hiddenc[MAXHIDDEN];
 
 int numhidden;
 int virtual = 0;
+extern int numvirtuals;
+extern FILE *barhandle;
 
-Client * currents[NUMVIRTUALS] =
-{
-  NULL, NULL, NULL, NULL, 
+Client * currents[NUMVIRTUALS] = {
+    NULL, NULL, NULL, NULL,
 };
 
-char    *b2items[NUMVIRTUALS+1] = 
-{
-  "  One  ",			/* to produce a nicer menu */
-  "Two",
-  "Three",
-  "Four",
-  "Five",
-  "Six",
-  "Seven",
-  "Eight",
-  "Nine",
-  "Ten",
-  "Eleven",
-  "Twelve",
-  0,
+char    *b2items[NUMVIRTUALS+1] = {
+    "  One  ",			/* to produce a nicer menu */
+    "Two",
+    "Three",
+    "Four",
+    "Five",
+    "Six",
+    "Seven",
+    "Eight",
+    "Nine",
+    "Ten",
+    "Eleven",
+    "Twelve",
+    0,
 };
 
-Menu    b2menu =
-{
+
+Menu    b2menu = {
     b2items,
 };
 
-char    *b3items[B3FIXED+MAXHIDDEN+1] = 
-{
+
+char    *b3items[B3FIXED+MAXHIDDEN+1] = {
     "New",
     "Reshape",
     "Move",
@@ -52,19 +51,16 @@ char    *b3items[B3FIXED+MAXHIDDEN+1] =
     0,
 };
 
-Menu    b3menu =
-{
+Menu    b3menu = {
     b3items,
 };
 
-Menu    egg =
-{
+Menu    egg = {
     version,
 };
 
-Menu    progs =
-{
-  progsnames,
+Menu    progs = {
+    progsnames,
 };
 
 void
@@ -79,45 +75,42 @@ XButtonEvent *e;
     if (c) {
         e->x += c->x - BORDER + 1;
         e->y += c->y - BORDER + 1;
-    }
-    else if (e->window != root)
+    } else if (e->window != root)
         XTranslateCoordinates(dpy, e->window, root, e->x, e->y,
-                &e->x, &e->y, &dw);
+                              &e->x, &e->y, &dw);
     switch (e->button) {
-    case Button1:
+    case Button2:
         if (c) {
             XMapRaised(dpy, c->parent);
             active(c);
-	    if (click_passes)
-	      XAllowEvents (dpy, ReplayPointer, curtime);
-        }
-	    else {
-        if ((e->state&(Mod4Mask))==(Mod4Mask))
-            button2(e);
+            if (click_passes)
+                XAllowEvents (dpy, ReplayPointer, curtime);
+        } else if (progsnames[0] != NULL) {
+            int n;
+            if ((n = menuhit(e, &progs)) != -1) {
+                if (fork() == 0) {
+                    if (fork() == 0) {
+                        close(ConnectionNumber(dpy));
+                        execlp(progsnames[n], progsnames[n], 0);
+                        exit(1);
+                    }
+                    exit(0);
+                }
+                wait((int *) 0);
             }
+        }
         return;
-    case Button2:
+    case Button1:
         if (c && click_passes) {
             XMapRaised(dpy, c->parent);
             active(c);
-	    XAllowEvents (dpy, ReplayPointer, curtime);
+            XAllowEvents (dpy, ReplayPointer, curtime);
+        } else {
+            if ((e->state&(ShiftMask|Mod1Mask))==(ShiftMask|Mod1Mask))
+                menuhit(e, &egg);
+            else if ((e->state&(Mod1Mask))==(Mod1Mask))
+                button2(e);
         }
-        else if (progsnames[0] != NULL)
-	    {
-	    int n;
-	    if ((n = menuhit(e, &progs)) != -1)
-	      {
-		if (fork() == 0) {
-		  if (fork() == 0) {
-		    close(ConnectionNumber(dpy));
-		    execlp(progsnames[n], progsnames[n], 0);
-		    exit(1);
-		  } 
-		  exit(0);
-		  }
-		wait((int *) 0);
-	      }
-	      }
         return;
     default:
         return;
@@ -125,22 +118,22 @@ XButtonEvent *e;
         if (c && click_passes) {
             XMapRaised(dpy, c->parent);
             active(c);
-	    XAllowEvents (dpy, ReplayPointer, curtime);
-		}
-        else
-        button3(e);
-        return;
+            XAllowEvents (dpy, ReplayPointer, curtime);
+        } else
+            button3(e);
+        break;
     }
 }
 
-void 
+
+void
 button2(e)
 XButtonEvent *e;
 {
     int n;
     cmapfocus(0);
     if ((n = menuhit(e, &b2menu)) == -1)
-      return;
+        return;
     switch_to(n);
     if (current)
         cmapfocus(current);
@@ -150,10 +143,10 @@ void
 initb2menu(n)
 int n;
 {
-  b2items[n] = 0;
+    b2items[n] = 0;
 }
 
-void 
+void
 button3(e)
 XButtonEvent *e;
 {
@@ -188,59 +181,64 @@ XButtonEvent *e;
         cmapfocus(current);
 }
 
+
+
+
 void
 switch_to(n)
 int n;
 {
-  if (n == virtual)
-    return;
-  currents[virtual] = current;
-  virtual = n;
-  switch_to_c(n,clients);
-  current = currents[virtual];
+    if (n == virtual)
+        return;
+    else if (n >= numvirtuals)
+        return;
+    fprintf(stdout, "[%d]\n", virtual + 1);
+    fprintf(barhandle, "[%d]\n", virtual + 1);
+    currents[virtual] = current;
+    virtual = n;
+    switch_to_c(n,clients);
+    current = currents[virtual];
 }
+
 
 void
 switch_to_c(n,c)
 int n;
 Client * c;
 {
-  if (c && c->next)
-    switch_to_c(n,c->next);
+    if (c && c->next)
+        switch_to_c(n,c->next);
 
-  if (c->parent == DefaultRootWindow(dpy))
-    return;
+    if (c->parent == DefaultRootWindow(dpy))
+        return;
 
-  if (c->virtual != virtual && c->state == NormalState)
-    {
-      XUnmapWindow(dpy, c->parent);
-      XUnmapWindow(dpy, c->window);
-      setstate9(c, IconicState);
-      if (c == current)
-	nofocus();
-    }
-  else if (c->virtual == virtual &&  c->state == IconicState)
-    {
-      int i;
+    if (c->virtual != virtual && c->state == NormalState) {
+        XUnmapWindow(dpy, c->parent);
+        XUnmapWindow(dpy, c->window);
+        setstate9(c, IconicState);
+        if (c == current)
+            nofocus();
+    } else if (c->virtual == virtual &&  c->state == IconicState) {
+        int i;
 
-      for (i = 0; i < numhidden; i++)
-	if (c == hiddenc[i]) 
-	  break;
+        for (i = 0; i < numhidden; i++)
+            if (c == hiddenc[i])
+                break;
 
-      if (i == numhidden)
-	{
-	  XMapWindow(dpy, c->window);
-	  XMapWindow(dpy, c->parent);
-	  setstate9(c, NormalState);
-	  if (currents[virtual] == c)
-	    active(c); 
-	}
+        if (i == numhidden) {
+            XMapWindow(dpy, c->window);
+            XMapWindow(dpy, c->parent);
+            setstate9(c, NormalState);
+            if (currents[virtual] == c)
+                active(c);
+        }
     }
 }
 
+
+
 void
-spawn()
-{
+spawn() {
     /*
      * ugly dance to avoid leaving zombies.  Could use SIGCHLD,
      * but it's not very portable, and I'm in a hurry...
@@ -250,12 +248,12 @@ spawn()
             close(ConnectionNumber(dpy));
             if (termprog != NULL) {
                 execl(shell, shell, "-c", termprog, 0);
-                fprintf(stderr, "9wm: exec %s", shell);
+                fprintf(stderr, "w9wm: exec %s", shell);
                 perror(" failed");
             }
             execlp("xterm", "xterm", "-ut", 0);
-            execlp("9term", "9term", "-9wm", 0);
-            perror("9wm: exec 9term/xterm failed");
+            execlp("9term", "9term", "-w9wm", 0);
+            perror("w9wm: exec 9term/xterm failed");
             exit(1);
         }
         exit(0);
@@ -278,7 +276,7 @@ Client *c;
     active(c);
     XRaiseWindow(dpy, c->parent);
     XMoveResizeWindow(dpy, c->parent, c->x-BORDER, c->y-BORDER,
-                    c->dx+2*(BORDER-1), c->dy+2*(BORDER-1));
+                      c->dx+2*(BORDER-1), c->dy+2*(BORDER-1));
     if (c->dx == odx && c->dy == ody)
         sendconfig(c);
     else
@@ -319,7 +317,7 @@ Client *c;
     if (c == 0 || numhidden == MAXHIDDEN)
         return;
     if (hidden(c)) {
-        fprintf(stderr, "9wm: already hidden: %s\n", c->label);
+        fprintf(stderr, "w9wm: already hidden: %s\n", c->label);
         return;
     }
     XUnmapWindow(dpy, c->parent);
@@ -342,13 +340,13 @@ int map;
     int i;
 
     if (n >= numhidden) {
-        fprintf(stderr, "9wm: unhide: n %d numhidden %d\n", n, numhidden);
+        fprintf(stderr, "w9wm: unhide: n %d numhidden %d\n", n, numhidden);
         return;
     }
     c = hiddenc[n];
     if (!hidden(c)) {
-        fprintf(stderr, "9wm: unhide: not hidden: %s(0x%lx)\n",
-            c->label, c->window);
+        fprintf(stderr, "w9wm: unhide: not hidden: %s(0x%lx)\n",
+                c->label, c->window);
         return;
     }
 
@@ -374,14 +372,14 @@ Client *c;
 int map;
 {
     int i;
-    
+
     for (i = 0; i < numhidden; i++)
         if (c == hiddenc[i]) {
             unhide(i, map);
             return;
         }
-    fprintf(stderr, "9wm: unhidec: not hidden: %s(0x%lx)\n",
-        c->label, c->window);
+    fprintf(stderr, "w9wm: unhidec: not hidden: %s(0x%lx)\n",
+            c->label, c->window);
 }
 
 void

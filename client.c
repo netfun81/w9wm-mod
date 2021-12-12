@@ -1,4 +1,3 @@
-/* Copyright (c) 1994 David Hogan, 2000 Benjamin Drieu see README for licence details */
 #include <stdio.h>
 #include <malloc.h>
 #include <string.h>
@@ -12,6 +11,10 @@
 Client      *clients;
 Client      *current = NULL;	/* paranoid */
 
+unsigned long int workspacekeys[9] = {
+    XK_1, XK_2, XK_3, XK_4, XK_5, XK_6, XK_7, XK_8, XK_9
+};
+
 void
 setactive(c, on)
 Client *c;
@@ -19,27 +22,37 @@ int on;
 {
     if (on) {
         XUngrabButton(dpy, AnyButton, AnyModifier, c->parent);
-	XSetInputFocus(dpy, c->window, RevertToPointerRoot, timestamp()); 
+        XSetInputFocus(dpy, c->window, RevertToPointerRoot, timestamp());
 
-	if (use_keys)
-	  {
-	    XGrabKey(dpy, 
-		     XKeysymToKeycode(dpy, XK_Tab),
-		     Mod4Mask, 
-		     root, False, GrabModeAsync, GrabModeAsync);
-	    XGrabKey(dpy, 
-		     XKeysymToKeycode(dpy, XK_Tab),
-		     Mod4Mask|ShiftMask, 
-		     root, False, GrabModeAsync, GrabModeAsync);
-	  }
+        if (use_keys) {
+            XGrabKey(dpy,
+                     XKeysymToKeycode(dpy, XK_Tab),
+                     Mod1Mask,
+                     root, False, GrabModeAsync, GrabModeAsync);
+            XGrabKey(dpy,
+                     XKeysymToKeycode(dpy, XK_Tab),
+                     Mod1Mask|ShiftMask,
+                     root, False, GrabModeAsync, GrabModeAsync);
+
+            for (int i = 0; i < 9; ++i) {
+                XGrabKey(dpy, XKeysymToKeycode(dpy, workspacekeys[i]), Mod1Mask,
+                         root, False, GrabModeAsync, GrabModeAsync);
+            }
+            XGrabKey(dpy, XKeysymToKeycode(dpy, XK_r), Mod1Mask, root, False, GrabModeAsync, GrabModeAsync);
+            XGrabKey(dpy, XKeysymToKeycode(dpy, XK_t), Mod1Mask, root, False, GrabModeAsync, GrabModeAsync);
+            XGrabKey(dpy, XKeysymToKeycode(dpy, XK_m), Mod1Mask, root, False, GrabModeAsync, GrabModeAsync);
+            XGrabKey(dpy, XKeysymToKeycode(dpy, XK_n), Mod1Mask, root, False, GrabModeAsync, GrabModeAsync);
+            XGrabKey(dpy, XKeysymToKeycode(dpy, XK_d), Mod1Mask, root, False, GrabModeAsync, GrabModeAsync);
+            XGrabKey(dpy, XKeysymToKeycode(dpy, XK_w), Mod1Mask|ShiftMask, root, False, GrabModeAsync, GrabModeAsync);
+            XGrabKey(dpy, XKeysymToKeycode(dpy, XK_q), Mod1Mask|ShiftMask, root, False, GrabModeAsync, GrabModeAsync);
+        }
 
         if (c->proto & Ptakefocus)
             sendcmessage(c->window, wm_protocols, wm_take_focus);
         cmapfocus(c);
-    }
-    else
+    } else
         XGrabButton(dpy, AnyButton, AnyModifier, c->parent, False,
-            ButtonMask, GrabModeAsync, GrabModeSync, None, None);
+                    ButtonMask, GrabModeAsync, GrabModeSync, None, None);
     draw_border(c, on);
 }
 
@@ -56,8 +69,7 @@ int active;
 
 #ifdef  DEBUG
 void
-dump_revert()
-{
+dump_revert() {
     Client *c;
     int i;
 
@@ -75,8 +87,7 @@ dump_revert()
 }
 
 void
-dump_clients()
-{
+dump_clients() {
     Client *c;
 
     for (c = clients; c; c = c->next)
@@ -91,7 +102,7 @@ Client *c;
     Client *cc;
 
     if (c == 0) {
-        fprintf(stderr, "9wm: active(c==0)\n");
+        fprintf(stderr, "w9wm: active(c==0)\n");
         return;
     }
     if (c == current)
@@ -113,8 +124,7 @@ Client *c;
 }
 
 void
-nofocus()
-{
+nofocus() {
     static Window w = 0;
     int mask;
     XSetWindowAttributes attr;
@@ -134,7 +144,7 @@ nofocus()
         mask = CWOverrideRedirect;
         attr.override_redirect = 1;
         w = XCreateWindow(dpy, root, 0, 0, 1, 1, 0, CopyFromParent,
-            InputOnly, CopyFromParent, mask, &attr);
+                          InputOnly, CopyFromParent, mask, &attr);
         XMapWindow(dpy, w);
     }
     XSetInputFocus(dpy, w, RevertToPointerRoot, timestamp());
