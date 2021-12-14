@@ -34,8 +34,6 @@ BUGS: (To be looked at in future)
 
 after starting w9wm, hotkeys arent working until selecting "New" from system menu or opening a program from applications menu.
 
-Alt-d pressed on root without a focused window will close window manager.
-
 
 ------------------------------------------------------------------------
 about w9wm:
