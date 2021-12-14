@@ -327,12 +327,12 @@ char    *argv[];
                         wait((int*)0);
                     } else if (getKeysym(&ev) == XK_t) {
                         spawn();
-                    } else if (getKeysym(&ev) == XK_m) {
+                    } else if (getKeysym(&ev) == XK_z) {
                         move(current);
-                    } else if (getKeysym(&ev) == XK_n) {
+                    } else if (getKeysym(&ev) == XK_x) {
                         reshape(current);
                     } else if (getKeysym(&ev) == XK_d) {
-							sendcmessage(current->window, wm_protocols, wm_delete);
+                        sendcmessage(current->window, wm_protocols, wm_delete);
                     } else if (getKeysym(&ev) == XK_q) {
                         if (ev.xkey.state & ShiftMask) {
                             sendcmessage(root, exit_w9wm, 0L);

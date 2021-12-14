@@ -40,8 +40,8 @@ int on;
             }
             XGrabKey(dpy, XKeysymToKeycode(dpy, XK_r), Mod1Mask, root, False, GrabModeAsync, GrabModeAsync);
             XGrabKey(dpy, XKeysymToKeycode(dpy, XK_t), Mod1Mask, root, False, GrabModeAsync, GrabModeAsync);
-            XGrabKey(dpy, XKeysymToKeycode(dpy, XK_m), Mod1Mask, root, False, GrabModeAsync, GrabModeAsync);
-            XGrabKey(dpy, XKeysymToKeycode(dpy, XK_n), Mod1Mask, root, False, GrabModeAsync, GrabModeAsync);
+            XGrabKey(dpy, XKeysymToKeycode(dpy, XK_z), Mod1Mask, root, False, GrabModeAsync, GrabModeAsync);
+            XGrabKey(dpy, XKeysymToKeycode(dpy, XK_x), Mod1Mask, root, False, GrabModeAsync, GrabModeAsync);
             XGrabKey(dpy, XKeysymToKeycode(dpy, XK_d), Mod1Mask, root, False, GrabModeAsync, GrabModeAsync);
             XGrabKey(dpy, XKeysymToKeycode(dpy, XK_w), Mod1Mask|ShiftMask, root, False, GrabModeAsync, GrabModeAsync);
             XGrabKey(dpy, XKeysymToKeycode(dpy, XK_q), Mod1Mask|ShiftMask, root, False, GrabModeAsync, GrabModeAsync);
