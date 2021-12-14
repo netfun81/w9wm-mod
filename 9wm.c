@@ -332,7 +332,7 @@ char    *argv[];
                     } else if (getKeysym(&ev) == XK_x) {
                         reshape(current);
                     } else if (getKeysym(&ev) == XK_d) {
-						if (current != None)
+                        if (current != None)
                         sendcmessage(current->window, wm_protocols, wm_delete);
                     } else if (getKeysym(&ev) == XK_q) {
                         if (ev.xkey.state & ShiftMask) {
