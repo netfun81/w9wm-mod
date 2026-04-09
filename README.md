@@ -5,6 +5,7 @@ this is w9wm window manager version 0.4.2 with these changes:
 3. Windows key + left click desktop for virtual desk menu.
 4. Middle click desktop for applications menu from $HOME/.w9wmrc.
 5. Right click desktop for system menu.
+6. Windows key + Tab to switch apps
 
 ------------------------------------------------------------------------
 about w9wm:
