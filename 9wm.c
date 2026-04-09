@@ -71,31 +71,6 @@ char    *fontlist[] = {
     0,
 };
 
-unsigned long int getKeysym(XEvent *ev) {
-    return XLookupKeysym(&(ev->xkey), 0);
-}
-
-int isdigitkey(unsigned int x) {
-    switch(x) {
-    case XK_1:
-    case XK_2:
-    case XK_3:
-    case XK_4:
-    case XK_5:
-    case XK_6:
-    case XK_7:
-    case XK_8:
-    case XK_9:
-        return (int)(x - XK_0);
-    default:
-        return 0;
-    }
-}
-
-void xmobar() {
-    barhandle = popen("xmobar", "w");
-}
-
 int
 main(argc, argv)
 int argc;
@@ -273,9 +248,6 @@ char    *argv[];
 
     nofocus();
     scanwins();
-
-    xmobar();
-    fprintf(barhandle, "[%d]\n", virtual + 1);
 
     for (;;) {
         getevent(&ev);
