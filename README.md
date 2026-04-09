@@ -1,39 +1,10 @@
 this is w9wm window manager version 0.4.2 with these changes:
 ------------------------------------------------------------------------
-1. Open new windows automatically instead of just showing a cursor.
-2. Hotkey support for virtual desktops and system menu items. (See usage below, some code borrowed from 999).
-3. Alt + left click desktop for virtual desk menu.
+1. Updated so w9wm will compile with latest gcc.
+2. Open most new windows fully instead of just showing a cursor.
+3. Windows key + left click desktop for virtual desk menu.
 4. Middle click desktop for applications menu from $HOME/.w9wmrc.
 5. Right click desktop for system menu.
-
-
-------------------------------------------------------------------------
-HOTKEYS:
-
-Alt+(1-9) - switches virtual desktops
-
-Alt+Tab, (Alt+Shift+Tab) - switch applications on same desk
-
-Alt+r - exec dmenu
-
-Alt+t - exec terminal
-
-Alt+z - move window
-
-Alt+x - resize window
-
-Alt+d - close current window
-
-Alt+shift+w - restart w9wm
-
-Alt+shift+q - quit w9wm
-
-
-------------------------------------------------------------------------
-BUGS: (To be looked at in future)
-
-after starting w9wm, hotkeys arent working until selecting "New" from system menu or opening a program from applications menu.
-
 
 ------------------------------------------------------------------------
 about w9wm:

@@ -106,9 +106,9 @@ XButtonEvent *e;
             active(c);
             XAllowEvents (dpy, ReplayPointer, curtime);
         } else {
-            if ((e->state&(ShiftMask|Mod1Mask))==(ShiftMask|Mod1Mask))
+            if ((e->state&(ShiftMask|Mod4Mask))==(ShiftMask|Mod4Mask))
                 menuhit(e, &egg);
-            else if ((e->state&(Mod1Mask))==(Mod1Mask))
+            else if ((e->state&(Mod4Mask))==(Mod4Mask))
                 button2(e);
         }
         return;
