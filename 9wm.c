@@ -302,59 +302,22 @@ char    *argv[];
             }
             break;
         case KeyPress:
-            if (use_keys) {
-                if (ev.xkey.state & Mod1Mask) {
-                    if (getKeysym(&ev) == XK_Tab) {
-                        if (ev.xkey.state & ShiftMask) {
-                            activateprevious();
-                        } else {
-                            activatenext();
-                        }
-                    } else if (isdigitkey(getKeysym(&ev))) {
-                        switch_to(isdigitkey(XLookupKeysym(&(ev.xkey),0)) - 1);
-                        if (current) {
-                            cmapfocus(current);
-                        }
-                    } else if (getKeysym(&ev) == XK_r) {
-                        if (fork() == 0) {
-                            if (fork() == 0) {
-                                close(ConnectionNumber(dpy));
-                                execlp("dmenu_run", "dmenu_run", 0);
-                                exit(1);
-                            }
-                            exit(0);
-                        }
-                        wait((int*)0);
-                    } else if (getKeysym(&ev) == XK_t) {
-                        spawn();
-                    } else if (getKeysym(&ev) == XK_z) {
-                        move(current);
-                    } else if (getKeysym(&ev) == XK_x) {
-                        reshape(current);
-                    } else if (getKeysym(&ev) == XK_d) {
-                        if (current != None)
-                        sendcmessage(current->window, wm_protocols, wm_delete);
-                    } else if (getKeysym(&ev) == XK_q) {
-                        if (ev.xkey.state & ShiftMask) {
-                            sendcmessage(root, exit_w9wm, 0L);
-                            XSync(dpy, False);
-                            exit(0);
-						}
-                    } else if (getKeysym(&ev) == XK_w) {
-                        if (ev.xkey.state & ShiftMask) {
-                            sendcmessage(root, restart_w9wm, 0L);
-                            XSync(dpy, False);
-                        }  
-                    } else {
-                        ev.xkey.window = current->window;
-                        XSendEvent(dpy, current->window, False, NoEventMask, &ev);
-                    }
-                } else if (current) {
-                    ev.xkey.window = current->window;
-                    XSendEvent(dpy, current->window, False, NoEventMask, &ev);
-                }
-            }
-            XAllowEvents(dpy, SyncBoth, ev.xkey.time);
+			if (use_keys)
+			{
+			if (XLookupKeysym(&(ev.xkey),0) == XK_Tab && 
+			(ev.xkey.state & Mod4Mask))
+			{
+			if (ev.xkey.state & ShiftMask)
+		    activateprevious();
+			else
+		    activatenext();		      
+			}
+			else if (current)
+			{
+			ev.xkey.window = current->window;
+			XSendEvent(dpy, current->window, False, NoEventMask, &ev);
+			}
+			}
             break;
         case ButtonPress:
             button(&ev.xbutton);
