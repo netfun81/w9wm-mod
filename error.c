@@ -6,7 +6,6 @@
 #include <X11/Xproto.h>
 #include "dat.h"
 #include "fns.h"
-#include <stdlib.h>
 
 int     ignore_badwindow;
 
