@@ -1,7 +1,10 @@
+/* Copyright (c) 1994 David Hogan, 2000 Benjamin Drieu, see README for licence details */
+
 #define BORDER      _border
 #define MAXHIDDEN   32
 #define B3FIXED     5
 #define NUMVIRTUALS 12
+#define NUMMENUITEMS 32
 
 #define AllButtonMask   (Button1Mask|Button2Mask|Button3Mask \
             |Button4Mask|Button5Mask)
@@ -71,7 +74,7 @@ struct Menu {
     int lasthit;
 };
 
-/* w9wm.c */
+/* 9wm.c */
 extern Display      *dpy;
 extern int          screen;
 extern Window       root;
@@ -81,10 +84,10 @@ extern int          initting;
 extern GC           gc;
 extern XFontStruct  *font;
 extern int          nostalgia;
-extern Atom	    exit_w9wm;
-extern Atom	    restart_w9wm;
+extern Atom	    exit_9wm;
+extern Atom	    restart_9wm;
 extern Atom         wm_state;
-extern Atom         _w9wm_hold_mode;
+extern Atom         _9wm_hold_mode;
 extern Atom         wm_protocols;
 extern Atom         wm_delete;
 extern Atom         wm_take_focus;

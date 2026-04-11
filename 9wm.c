@@ -1,5 +1,5 @@
+/* Copyright (c) 1994 David Hogan, see README for licence details */
 #include <stdio.h>
-#include <stdlib.h>
 #include <signal.h>
 #include <errno.h>
 #include <X11/X.h>
@@ -11,13 +11,14 @@
 #include "dat.h"
 #include "fns.h"
 #include "patchlevel.h"
+#include <stdlib.h>
 #include <X11/keysym.h>
 #include <pwd.h>
 #include <sys/types.h>
-#include <sys/wait.h>
 
-char    *version[] = {
-    "9wm version 1.1, Copyright (c) 1994 David Hogan",
+char    *version[] = 
+{
+    "9wm version 1.1, Copyright (c) 1994 David Hogan", 
     "w9wm version 0.4.2, Copyright (c) 2000-2003 Benjamin Drieu", 0,
 };
 
@@ -43,22 +44,21 @@ int             min_cmaps;
 int             curtime;
 int             debug;
 int             signalled;
-Bool            click_passes = 0;
-Bool            use_keys = 1;
-int             numvirtuals = 4;
-char            *progsnames[16];
-FILE            *barhandle;
+Bool 		click_passes = 0;
+Bool		use_keys = 1;
+int		numvirtuals = 4;
+char *		progsnames[NUMMENUITEMS + 1];
 
-Atom        exit_w9wm;
-Atom        restart_w9wm;
+Atom        exit_9wm;
+Atom        restart_9wm;
 Atom        wm_state;
 Atom        wm_change_state;
 Atom        wm_protocols;
 Atom        wm_delete;
 Atom        wm_take_focus;
 Atom        wm_colormaps;
-Atom        _w9wm_running;
-Atom        _w9wm_hold_mode;
+Atom        _9wm_running;
+Atom        _9wm_hold_mode;
 
 void    usage(), sighandler(), getevent();
 
@@ -84,7 +84,7 @@ char    *argv[];
     char *fname;
 
     myargv = argv;          /* for restart */
-    
+
     background = do_exit = do_restart = 0;
     font = 0;
     fname = 0;
@@ -93,18 +93,25 @@ char    *argv[];
             nostalgia++;
         else if (strcmp(argv[i], "-debug") == 0)
             debug++;
-        else if ((strcmp(argv[i], "-display") == 0 || strcmp(argv[i], "-dpy") == 0 )
-                 && i+1<argc) {
+        else if ((strcmp(argv[i], "-display") == 0 || strcmp(argv[i], "-dpy") == 0 ) 
+		 && i+1<argc)
+	  {
             display = argv[++i];
-            setenv("DISPLAY", display, 1);
-        } else if (strcmp(argv[i], "-pass") == 0) {
-            click_passes = 1;
-        } else if (strcmp(argv[i], "-nokeys") == 0) {
-            use_keys = 0;
-        } else if (strcmp(argv[i], "-font") == 0 && i+1<argc) {
+	    setenv("DISPLAY", display, 1);
+	  }
+        else if (strcmp(argv[i], "-pass") == 0)
+	  {
+	    click_passes = 1;
+	  }
+        else if (strcmp(argv[i], "-nokeys") == 0)
+	  {
+	    use_keys = 0;
+	  }
+        else if (strcmp(argv[i], "-font") == 0 && i+1<argc) {
             i++;
             fname = argv[i];
-        } else if (strcmp(argv[i], "-grey") == 0)
+        }
+        else if (strcmp(argv[i], "-grey") == 0)
             background = 1;
         else if (strcmp(argv[i], "-term") == 0 && i+1<argc)
             termprog = argv[++i];
@@ -114,13 +121,16 @@ char    *argv[];
                 fprintf(stderr, "; patch level %d", PATCHLEVEL);
             putc('\n', stderr);
             exit(0);
-        } else if (strcmp(argv[i], "-virtuals") == 0 && i+1<argc) {
-            int n = atoi(argv[++i]);
-            if (n > 0 && n <= 12)
-                numvirtuals = n;
-            else
-                fprintf(stderr, "w9wm: wrong number of virtual screens, must be between 1 and 12\n");
-        } else if (argv[i][0] == '-')
+        }
+        else if (strcmp(argv[i], "-virtuals") == 0 && i+1<argc)
+	  {
+	    int n = atoi(argv[++i]);
+	    if (n > 0 && n <= 12)
+	      numvirtuals = n;
+	    else
+	      fprintf(stderr, "9wm: wrong number of virtual screens, must be between 1 and 12\n");
+	  }
+        else if (argv[i][0] == '-')
             usage();
         else
             break;
@@ -158,17 +168,17 @@ char    *argv[];
     if (signal(SIGHUP, sighandler) == SIG_IGN)
         signal(SIGHUP, SIG_IGN);
 
-    exit_w9wm = XInternAtom(dpy, "w9wm_EXIT", False);
-    restart_w9wm = XInternAtom(dpy, "w9wm_RESTART", False);
+    exit_9wm = XInternAtom(dpy, "9WM_EXIT", False);
+    restart_9wm = XInternAtom(dpy, "9WM_RESTART", False);
 
     curtime = -1;       /* don't care */
     if (do_exit) {
-        sendcmessage(root, exit_w9wm, 0L);
+        sendcmessage(root, exit_9wm, 0L);
         XSync(dpy, False);
         exit(0);
     }
     if (do_restart) {
-        sendcmessage(root, restart_w9wm, 0L);
+        sendcmessage(root, restart_9wm, 0L);
         XSync(dpy, False);
         exit(0);
     }
@@ -179,22 +189,22 @@ char    *argv[];
     wm_delete = XInternAtom(dpy, "WM_DELETE_WINDOW", False);
     wm_take_focus = XInternAtom(dpy, "WM_TAKE_FOCUS", False);
     wm_colormaps = XInternAtom(dpy, "WM_COLORMAP_WINDOWS", False);
-    _w9wm_running = XInternAtom(dpy, "_w9wm_RUNNING", False);
-    _w9wm_hold_mode = XInternAtom(dpy, "_w9wm_HOLD_MODE", False);
+    _9wm_running = XInternAtom(dpy, "_9WM_RUNNING", False);
+    _9wm_hold_mode = XInternAtom(dpy, "_9WM_HOLD_MODE", False);
 
     black = BlackPixel(dpy, screen);
     white = WhitePixel(dpy, screen);
 
     if (fname != 0)
         if ((font = XLoadQueryFont(dpy, fname)) == 0)
-            fprintf(stderr, "w9wm: warning: can't load font %s\n", fname);
+            fprintf(stderr, "9wm: warning: can't load font %s\n", fname);
 
     if (font == 0) {
         i = 0;
         for (;;) {
             fname = fontlist[i++];
             if (fname == 0) {
-                fprintf(stderr, "w9wm: can't find a font\n");
+                fprintf(stderr, "9wm: can't find a font\n");
                 exit(1);
             }
             font = XLoadQueryFont(dpy, fname);
@@ -212,7 +222,7 @@ char    *argv[];
     gv.line_width = 0;
     gv.subwindow_mode = IncludeInferiors;
     mask = GCForeground | GCBackground | GCFunction | GCFont | GCLineWidth
-           | GCSubwindowMode;
+        | GCSubwindowMode;
     gc = XCreateGC(dpy, root, mask, &gv);
 
     initcurs();
@@ -223,10 +233,10 @@ char    *argv[];
 
     attr.cursor = arrow;
     attr.event_mask = SubstructureRedirectMask
-                      | SubstructureNotifyMask | ColormapChangeMask
-                      | ButtonPressMask | ButtonReleaseMask
-                      | PropertyChangeMask | StructureNotifyMask
-                      | (use_keys ? KeyPressMask : 0) ;
+      | SubstructureNotifyMask | ColormapChangeMask
+      | ButtonPressMask | ButtonReleaseMask
+      | PropertyChangeMask | StructureNotifyMask
+      | (use_keys ? KeyPressMask : 0) ;
     mask = CWCursor|CWEventMask;
     XChangeWindowAttributes(dpy, root, mask, &attr);
     XSync(dpy, False);
@@ -241,7 +251,7 @@ char    *argv[];
 
     /* set selection so that 9term knows we're running */
     curtime = CurrentTime;
-    XSetSelectionOwner(dpy, _w9wm_running, menuwin, timestamp());
+    XSetSelectionOwner(dpy, _9wm_running, menuwin, timestamp());
 
     XSync(dpy, False);
     initting = 0;
@@ -265,38 +275,39 @@ char    *argv[];
                 shapenotify((XShapeEvent *)&ev);
             else
 #endif
-                fprintf(stderr, "w9wm: unknown ev.type %d\n", ev.type);
+                fprintf(stderr, "9wm: unknown ev.type %d\n", ev.type);
             break;
-        case KeyRelease:
-            if (use_keys && current) {
-                ev.xkey.window = current->window;
-                XSendEvent(dpy, current->window, False, NoEventMask, &ev);
-            }
-            break;
-        case KeyPress:
-			if (use_keys)
-			{
-			if (XLookupKeysym(&(ev.xkey),0) == XK_Tab && 
-			(ev.xkey.state & Mod4Mask))
-			{
-			if (ev.xkey.state & ShiftMask)
+	case KeyRelease:
+	  if (use_keys && current)
+	    {
+	      ev.xkey.window = current->window;
+	      XSendEvent(dpy, current->window, False, NoEventMask, &ev);
+	    }
+	  break;
+	case KeyPress:
+	  if (use_keys)
+	    {
+	      if (XLookupKeysym(&(ev.xkey),0) == XK_Tab && 
+		  (ev.xkey.state & ControlMask))
+		{
+		  if (ev.xkey.state & ShiftMask)
 		    activateprevious();
-			else
+		  else
 		    activatenext();		      
-			}
-			else if (current)
-			{
-			ev.xkey.window = current->window;
-			XSendEvent(dpy, current->window, False, NoEventMask, &ev);
-			}
-			}
-            break;
+		}
+	      else if (current)
+		{
+		  ev.xkey.window = current->window;
+		  XSendEvent(dpy, current->window, False, NoEventMask, &ev);
+		}
+	    }
+	  break;
         case ButtonPress:
             button(&ev.xbutton);
-            /*  option */
-            {
-                XAllowEvents (dpy, SyncPointer, ev.xbutton.time);
-            }
+	    /*  option */
+	    {
+	      XAllowEvents (dpy, SyncPointer, ev.xbutton.time);
+	    }
             break;
         case ButtonRelease:
             break;
@@ -304,8 +315,8 @@ char    *argv[];
             mapreq(&ev.xmaprequest);
             break;
         case ConfigureRequest:
-            configurereq(&ev.xconfigurerequest);
-            break;
+	  configurereq(&ev.xconfigurerequest);
+	  break;
         case CirculateRequest:
             circulatereq(&ev.xcirculaterequest);
             break;
@@ -328,13 +339,13 @@ char    *argv[];
             property(&ev.xproperty);
             break;
         case SelectionClear:
-            fprintf(stderr, "w9wm: SelectionClear (this should not happen)\n");
+            fprintf(stderr, "9wm: SelectionClear (this should not happen)\n");
             break;
         case SelectionNotify:
-            fprintf(stderr, "w9wm: SelectionNotify (this should not happen)\n");
+            fprintf(stderr, "9wm: SelectionNotify (this should not happen)\n");
             break;
         case SelectionRequest:
-            fprintf(stderr, "w9wm: SelectionRequest (this should not happen)\n");
+            fprintf(stderr, "9wm: SelectionRequest (this should not happen)\n");
             break;
         case EnterNotify:
             enter(&ev.xcrossing);
@@ -356,59 +367,65 @@ char    *argv[];
 }
 
 void
-activateprevious() {
-    Client * c, * tmp = NULL;
+activateprevious()
+{
+  Client * c, * tmp = NULL;
 
-    if (!current)
-        current = clients;
+  if (!current)
+    current = clients;
 
-    if (!clients || !current)
-        return;
+  if (!clients || !current)
+    return;
 
-    for (c = clients; c->next; c=c->next) {
-        if (c->virtual == virtual &&
-                c->state == NormalState)
-            tmp = c;
-        if (tmp &&
-                c->next == current)
-            break;
+  for (c = clients; c->next; c=c->next)
+    {
+      if (c->virtual == virtual &&
+	  c->state == NormalState)
+	tmp = c;
+      if (tmp && 
+	  c->next == current)
+	break;
     }
 
-    if (tmp &&
-            tmp->state == NormalState &&
-            tmp->parent != root) {	/* paranoid */
-        active(tmp);
-        XMapRaised(dpy, tmp->parent);
-        return;
+  if (tmp && 
+      tmp->state == NormalState && 
+      tmp->parent != root)	/* paranoid */
+    {
+      active(tmp);
+      XMapRaised(dpy, tmp->parent);
+      return;
     }
 }
 
 void
-activatenext() {
-    Client * c;
+activatenext()
+{
+  Client * c;
 
-    if (!current)
-        current = clients;
+  if (!current)
+    current = clients;
 
-    if (!clients || !current)
-        return;
+  if (!clients || !current)
+    return;
 
-    for (c=current->next; c != current; c = ((c && c->next) ? c->next : clients))
-        if (c &&
-                c->state == NormalState &&
-                c->virtual == virtual &&
-                c->parent != root) {	/* paranoid */
-            active(c);
-            XMapRaised(dpy, c->parent);
-            return;
-        }
+  for (c=current->next; c != current; c = ((c && c->next) ? c->next : clients))
+    if (c &&
+	c->state == NormalState && 
+	c->virtual == virtual && 
+	c->parent != root)	/* paranoid */
+      {
+	active(c);
+	XMapRaised(dpy, c->parent);
+	return;
+      }
 }
 
 void
-usage() {
+usage()
+{
     fprintf(stderr, "usage: w9wm [[-display|-dpy] dpy] [-grey] [-version] [-font fname] [-pass]\n"
-            "       [-nokeys] [-debug] [-nostalgia] [-term prog] [-pass] [-virtuals n]\n"
-            "       [exit|restart]\n");
+"       [-nokeys] [-debug] [-nostalgia] [-term prog] [-pass] [-virtuals n]\n"
+"       [exit|restart]\n");
     exit(1);
 }
 
@@ -434,16 +451,17 @@ long x;
         mask = SubstructureRedirectMask;        /* magic! */
     status = XSendEvent(dpy, w, False, mask, &ev);
     if (status == 0)
-        fprintf(stderr, "w9wm: sendcmessage failed\n");
+        fprintf(stderr, "9wm: sendcmessage failed\n");
 }
 
 Time
-timestamp() {
+timestamp()
+{
     XEvent ev;
 
     if (curtime == CurrentTime) {
-        XChangeProperty(dpy, root, _w9wm_running, _w9wm_running, 8,
-                        PropModeAppend, (unsigned char *)"", 0);
+        XChangeProperty(dpy, root, _9wm_running, _9wm_running, 8,
+                PropModeAppend, (unsigned char *)"", 0);
         XMaskEvent(dpy, PropertyChangeMask, &ev);
         curtime = ev.xproperty.time;
     }
@@ -470,7 +488,8 @@ Client *c;
 }
 
 void
-scanwins() {
+scanwins()
+{
     unsigned int i, nwins;
     Client *c;
     Window dw1, dw2, *wins;
@@ -500,7 +519,7 @@ configurereq(e)
 XConfigureRequestEvent *e;
 {
     XWindowChanges wc;
-    /*      XConfigureEvent ce; */
+/*      XConfigureEvent ce; */
     Client *c;
 
     /* we don't set curtime as nothing here uses it */
@@ -512,14 +531,16 @@ XConfigureRequestEvent *e;
             c->x = e->x;
         if (e->value_mask & CWY)
             c->y = e->y;
-        if (e->value_mask & CWWidth) {
+        if (e->value_mask & CWWidth)
+	  {
             c->dx = e->width;
-            XResizeWindow(dpy, c->parent, c->dx+2*(BORDER-1), c->dy+2*(BORDER-1));
-        }
-        if (e->value_mask & CWHeight) {
+	    XResizeWindow(dpy, c->parent, c->dx+2*(BORDER-1), c->dy+2*(BORDER-1)); 
+	  }
+        if (e->value_mask & CWHeight)
+	  {
             c->dy = e->height;
-            XResizeWindow(dpy, c->parent, c->dx+2*(BORDER-1), c->dy+2*(BORDER-1));
-        }
+	    XResizeWindow(dpy, c->parent, c->dx+2*(BORDER-1), c->dy+2*(BORDER-1)); 
+	  }
         if (e->value_mask & CWBorderWidth)
             c->border = e->border_width;
         gravitate(c, 0);
@@ -539,7 +560,8 @@ XConfigureRequestEvent *e;
     if (c && c->init) {
         wc.x = BORDER-1;
         wc.y = BORDER-1;
-    } else {
+    }
+    else {
         wc.x = e->x;
         wc.y = e->y;
     }
@@ -562,7 +584,7 @@ XMapRequestEvent *e;
     curtime = CurrentTime;
     c = getclient(e->window, 0);
     if (c == 0 || c->window != e->window) {
-        fprintf(stderr, "w9wm: bogus mapreq %p %p\n", c, (void*)e->window);
+        fprintf(stderr, "9wm: bogus mapreq %p %p\n", c, (void*)e->window);
         return;
     }
 
@@ -575,13 +597,13 @@ XMapRequestEvent *e;
         }
         XReparentWindow(dpy, c->window, c->parent, BORDER-1, BORDER-1);
         XAddToSaveSet(dpy, c->window);
-    /* fall through... */
+        /* fall through... */
     case NormalState:
         XMapRaised(dpy, c->parent);
         XMapWindow(dpy, c->window);
         setstate9(c, NormalState);
-        //        if (c->trans != None && current && c->trans == current->window)
-        active(c);
+	//        if (c->trans != None && current && c->trans == current->window)
+                active(c);
         break;
     case IconicState:
         unhidec(c, 1);
@@ -608,9 +630,10 @@ XUnmapEvent *e;
         case NormalState:
             if (c == current)
                 nofocus();
-            if (!c->reparenting) {
+            if (!c->reparenting)
+	      {
                 withdraw(c);
-            }
+	      }
             break;
         }
         c->reparenting = 0;
@@ -669,15 +692,15 @@ XClientMessageEvent *e;
     Client *c;
 
     curtime = CurrentTime;
-    if (e->window == root && e->message_type == exit_w9wm) {
+    if (e->window == root && e->message_type == exit_9wm) {
         cleanup();
         exit(0);
     }
-    if (e->window == root && e->message_type == restart_w9wm) {
-        fprintf(stderr, "*** w9wm restarting ***\n");
+    if (e->window == root && e->message_type == restart_9wm) {
+        fprintf(stderr, "*** 9wm restarting ***\n");
         cleanup();
         execvp(myargv[0], myargv);
-        perror("w9wm: exec failed");
+        perror("9wm: exec failed");
         exit(1);
     }
     if (e->message_type == wm_change_state) {
@@ -685,13 +708,14 @@ XClientMessageEvent *e;
         if (e->format == 32 && e->data.l[0] == IconicState && c != 0) {
             if (normal(c))
                 hide(c);
-        } else
-            fprintf(stderr, "w9wm: WM_CHANGE_STATE: format %d data %d w 0p%p\n",
-                    e->format, (int)e->data.l[0], (void*)e->window);
+        }
+        else
+            fprintf(stderr, "9wm: WM_CHANGE_STATE: format %d data %d w 0p%p\n",
+                e->format, (int)e->data.l[0], (void*)e->window);
         return;
     }
-    fprintf(stderr, "w9wm: strange ClientMessage, type 0x%x window 0x%x\n",
-            (int)e->message_type, (int)e->window);
+    fprintf(stderr, "9wm: strange ClientMessage, type 0x%x window 0x%x\n",
+        (int)e->message_type, (int)e->window);
 }
 
 void
@@ -708,7 +732,8 @@ XColormapEvent *e;
             c->cmap = e->colormap;
             if (c == current)
                 cmapfocus(c);
-        } else
+        }
+        else
             for (c = clients; c; c = c->next)
                 for (i = 0; i < c->ncmapwins; i++)
                     if (c->cmapwins[i] == e->window) {
@@ -754,11 +779,12 @@ XPropertyEvent *e;
         gettrans(c);
         return;
     }
-    if (a == _w9wm_hold_mode) {
-        c->hold = getiprop(c->window, _w9wm_hold_mode);
+    if (a == _9wm_hold_mode) {
+        c->hold = getiprop(c->window, _9wm_hold_mode);
         if (c == current)
             draw_border(c, 1);
-    } else if (a == wm_colormaps) {
+    }
+    else if (a == wm_colormaps) {
         getcmaps(c);
         if (c == current)
             cmapfocus(c);
@@ -784,9 +810,10 @@ XReparentEvent *e;
             c->dy = attr.height;
             c->border = attr.border_width;
         }
-    } else {
+    }
+    else {
         c = getclient(e->window, 0);
-        if (c != 0 && (c->parent == root || withdrawn(c)))
+        if (c != 0 && (c->parent == root || withdrawn(c))) 
             rmclient(c);
     }
 }
@@ -823,7 +850,8 @@ XCrossingEvent *e;
 }
 
 void
-sighandler() {
+sighandler()
+{
     signalled = 1;
 }
 
@@ -855,44 +883,47 @@ XEvent *e;
             return;
         }
         if (errno != EINTR || !signalled) {
-            perror("w9wm: select failed");
+            perror("9wm: select failed");
             exit(1);
         }
     }
     cleanup();
-    fprintf(stderr, "w9wm: exiting on signal\n");
+    fprintf(stderr, "9wm: exiting on signal\n");
     exit(1);
 }
 
 
 void
-parseprogsfile () {
-    FILE *file;
-    int i;
-    struct passwd * p = getpwuid(getuid());
-    char * buffer;
+parseprogsfile ()
+{
+  FILE *file;
+  int i;
+  struct passwd * p = getpwuid(getuid());
+  char * buffer;
 
-    buffer = (char *) malloc (1024);
-    snprintf (buffer, 1024, "%s/.w9wmrc", p->pw_dir);
+  buffer = (char *) malloc (1024);
+  snprintf (buffer, 1024, "%s/.w9wmrc", p->pw_dir);
 
-    file = fopen (buffer, "r");
-    if (! file) {
-        fprintf (stderr, "cannot open %s\n", buffer);
-        progsnames[0] = NULL;
-        return;
+  file = fopen (buffer, "r");
+  if (! file)
+    {
+      fprintf (stderr, "cannot open %s\n", buffer);
+      progsnames[0] = NULL;
+      return;
     }
 
-    for (i = 0; i<16 && ! feof(file); i++) {
-        buffer = (char *) malloc (1024);
-        if (! fgets(buffer, 1024, file))
-            break;
-        if (buffer[strlen(buffer)-1] == '\n')
-            buffer[strlen(buffer)-1] = 0;
-        progsnames[i] = buffer;
+  for (i = 0; i < NUMMENUITEMS && ! feof(file); i++)
+    {
+      buffer = (char *) malloc (1024);
+      if (! fgets(buffer, 1024, file))
+	break;
+      if (buffer[strlen(buffer)-1] == '\n')
+	buffer[strlen(buffer)-1] = 0;
+      progsnames[i] = buffer;
     }
 
-    progsnames[i] = NULL;
+  progsnames[i] = NULL;
 
-    fclose (file);
-    return;
+  fclose (file);
+  return;
 }

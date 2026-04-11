@@ -1,6 +1,7 @@
 /* Copyright (c) 1994 David Hogan, 2000 Benjamin Drieu, see README for licence details */
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <X11/X.h>
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
@@ -8,7 +9,6 @@
 #include <X11/extensions/shape.h>
 #include "dat.h"
 #include "fns.h"
-#include <string.h>
 
 int
 manage(c, mapped)
@@ -46,7 +46,7 @@ int mapped;
     getproto(c);
     gettrans(c);
     if (c->is9term)
-        c->hold = getiprop(c->window, _w9wm_hold_mode);
+        c->hold = getiprop(c->window, _9wm_hold_mode);
 
     /* Figure out what to do with the window from hints */
 
@@ -224,7 +224,7 @@ int invert;
     default:
 	dx = 0;
 	dy = 0;
-        fprintf(stderr, "w9wm: bad window gravity %d for 0x%x\n", (int)gravity, (int)c->window);
+        fprintf(stderr, "9wm: bad window gravity %d for 0x%x\n", (int)gravity, (int)c->window);
     }
     dx += BORDER;
     dy += BORDER;
@@ -388,7 +388,7 @@ Atom a;
     return (char *)p;
 }
 
-int64_t
+int
 get1prop(w, a, type)
 Window w;
 Atom a;
@@ -400,7 +400,7 @@ Atom type;
         return 0;
     x = *p;
     XFree((void*) p);
-    return (int64_t)x;
+    return (int)x;
 }
 
 Window
