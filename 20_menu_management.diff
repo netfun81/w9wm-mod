@@ -1,0 +1,93 @@
+Description: Audit of menu subsystem.
+ There was an off-by-one error in case
+ the available menu allocation was exhausted
+ at 16 entries.
+ .
+ A macro 9WM_MENU_ITEMS is introduced with
+ value 32 for the number of possible entries.
+ This is in accordance with the manual page, but
+ raises the value actually encoded in source.
+ .
+ When attempting to execute a menu item, code
+ is introduced to extract the name of the chosen
+ executable and to separate arguments. Then the
+ result is passed on to execvp(). Thus it is now
+ possible to pass arguments in menu entries and
+ to keep them easily visible.
+Author: Mats Erik Andersson <debian@gisladisker.se>
+Forwarded: no
+Last-Update: 2012-10-04
+
+diff -Naurp w9wm-0.4.2.debian/9wm.c w9wm-0.4.2/9wm.c
+--- w9wm-0.4.2.debian/9wm.c
++++ w9wm-0.4.2/9wm.c
+@@ -47,7 +47,7 @@ int             signalled;
+ Bool 		click_passes = 0;
+ Bool		use_keys = 1;
+ int		numvirtuals = 4;
+-char *		progsnames[16];
++char *		progsnames[NUMMENUITEMS + 1];
+ 
+ Atom        exit_9wm;
+ Atom        restart_9wm;
+@@ -912,7 +912,7 @@ parseprogsfile ()
+       return;
+     }
+ 
+-  for (i = 0; i<16 && ! feof(file); i++)
++  for (i = 0; i < NUMMENUITEMS && ! feof(file); i++)
+     {
+       buffer = (char *) malloc (1024);
+       if (! fgets(buffer, 1024, file))
+diff -Naurp w9wm-0.4.2.debian/dat.h w9wm-0.4.2/dat.h
+--- w9wm-0.4.2.debian/dat.h
++++ w9wm-0.4.2/dat.h
+@@ -4,6 +4,7 @@
+ #define MAXHIDDEN   32
+ #define B3FIXED     5
+ #define NUMVIRTUALS 12
++#define NUMMENUITEMS 32
+ 
+ #define AllButtonMask   (Button1Mask|Button2Mask|Button3Mask \
+             |Button4Mask|Button5Mask)
+diff -Naurp w9wm-0.4.2.debian/menu.c w9wm-0.4.2/menu.c
+--- w9wm-0.4.2.debian/menu.c
++++ w9wm-0.4.2/menu.c
+@@ -2,6 +2,7 @@
+ #include <stdio.h>
+ #include <unistd.h>
+ #include <stdlib.h>
++#include <string.h>
+ #include <sys/types.h>
+ #include <sys/wait.h>
+ #include <X11/X.h>
+@@ -101,8 +102,28 @@ XButtonEvent *e;
+ 	      {
+ 		if (fork() == 0) {
+ 		  if (fork() == 0) {
++#define NUMARGS 16
++		    char *p, *args[NUMARGS + 2];
++		    int pos = 0;
++
++		    if (!(args[pos] = strdup(progsnames[n])))
++		      exit(1);	/* Fail silently. */
++
++		    while ((p = strchr(args[pos], ' '))) {
++		      *p++ = '\0';
++		      while (*p == ' ')
++			p++;
++		      if (*p == '\0' || *p == '#')
++			break;
++
++		      args[++pos] = p;
++		      if (pos == NUMARGS)
++			break;
++		    }
++		    args[++pos] = NULL;
++
+ 		    close(ConnectionNumber(dpy));
+-		    execlp(progsnames[n], progsnames[n], (char *) NULL);
++		    execvp(args[0], args);
+ 		    exit(1);
+ 		  }
+ 		  exit(0);

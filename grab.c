@@ -413,6 +413,10 @@ int
 sweep(c)
 Client *c;
 {
+	    // create new windows automatically
+	if (c->state == 0)
+		return 0;
+		
     XEvent ev;
     int status;
     XButtonEvent *e;
