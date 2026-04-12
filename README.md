@@ -1,10 +1,10 @@
 this is w9wm window manager version 0.4.2 with these changes:
 ------------------------------------------------------------------------
-1. Updated so w9wm will compile with latest gcc.
-2. Open most new windows fully instead of just showing a cursor.
-3. Windows key + left click desktop for virtual desk menu.
-4. Middle click desktop for applications menu from $HOME/.w9wmrc.
-5. Right click desktop for system menu.
+1. Updated with latest patches and a Makefile that will compile
+2. Most windows open fully instead of just showing a cursor
+3. Windows key + left click desktop for applications menu from $HOME/.w9wmrc
+4. Middle click desktop for virtual desktop menu
+5. Right click desktop for system menu
 6. Windows key + Tab to switch apps
 
 ------------------------------------------------------------------------
