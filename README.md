@@ -1,11 +1,24 @@
 this is w9wm window manager version 0.4.2 with these changes:
-------------------------------------------------------------------------
+
 1. Updated with latest patches and a Makefile that will compile
 2. Make most windows open fully instead of just showing a cursor
 3. Middle click desktop for applications menu from $HOME/.w9wmrc
 4. Right click desktop for system menu
 5. Windows key + Left click desktop for virtual desktop menu
 6. Windows key + Tab to cycle between apps
+7. Added Hotkey support
+
+------------------------------------------------------------------------
+HOTKEYS:
+
+Win+(1-9) - switches virtual desktops
+Win+Tab, (Win+Shift+Tab) - switch applications on same desk
+Win+r - exec dmenu
+Win+t - exec terminal
+Win+z - move window
+Win+x - resize window
+Win+d - close current window
+Win+shift+q - quit w9wm
 
 ------------------------------------------------------------------------
 about w9wm:

@@ -6,7 +6,7 @@
 # if you're using AIX, add "-DBSD_INCLUDES" to "CFLAGS".
 #
 
-CFLAGS =-O3 -g -DSHAPE -std=gnu11
+CFLAGS = -O3 -g -DSHAPE -std=gnu11
 LDFLAGS = -lXext -lX11
 BIN = /usr/bin/X11
 
