@@ -140,8 +140,6 @@ XButtonEvent *e;
         }
 	else {
             if ((e->state&(Mod4Mask))==(Mod4Mask))
-                menuhit(e, &egg);
-	    else
 	        button2(e);
 	}
         return;
