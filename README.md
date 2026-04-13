@@ -12,12 +12,19 @@ this is w9wm window manager version 0.4.2 with these changes:
 HOTKEYS:
 
 Win+(1-9) - switches virtual desktops
+
 Win+Tab, (Win+Shift+Tab) - switch applications on same desk
+
 Win+r - exec dmenu
+
 Win+t - exec terminal
+
 Win+z - move window
+
 Win+x - resize window
+
 Win+d - close current window
+
 Win+shift+q - quit w9wm
 
 ------------------------------------------------------------------------
